@@ -10,8 +10,7 @@ const titleClickHandler = function(event){
     event.preventDefault();
 	
     const clickedElement = this;
-	
-    console.log('click link - clicked element: ' + clickedElement);
+
     
    /* [DONE] remove class 'active' from all article links  
         a. find all links witch class active
@@ -55,6 +54,7 @@ function generateTitleLinks(customSelector = ''){
     let html = '';
     /* [DONE] for each article */
     const articleList = document.querySelectorAll(optArticleSelector  + customSelector);
+	
     for(let article of articleList){
         /* get the article id */
         const articleId = article.getAttribute('id'); 
@@ -87,12 +87,14 @@ generateTitleLinks();
 
 function generateTags(){
 	/* [NEW] create a new variable allTags with an empty array */
-	const allTags = [];
+	//const allTags = [];
+	/* [NEW] create a new variable allTags with an empty object */
+	let allTags = {}; 
 	/* find all articles */
 	const allArticles = document.querySelectorAll(optArticleSelector); //.post
 
   /* START LOOP: for every article: */
-	for(let article of allArticles){
+	for(let article of allArticles){ 
 		/* find tags wrapper */ 													
 		const tagsWrapper = article.querySelector(optTagSelector);  //.post-tags .list
 		/* make html variable with empty string */
@@ -102,26 +104,39 @@ function generateTags(){
 		/* split tags into array */
 		const tagsList = tags.split(' '); 	
 		/* START LOOP: for each tag */
-		for(let tag of tagsList){
+		for(let tag of tagsList){   
 		  /* generate HTML of the link */
 			const tagLink =  '<li><a href="#tag-'+ tag +'">' + tag + '</a></li>';
 		  /* add generated code to html variable */
-			html = html + tagLink;
+			html = html + tagLink; 
 	/* [NEW] check if this link is NOT already in allTags */
-		if(allTags.indexOf(tagLink) == -1){
+		//if(allTags.indexOf(tagLink) == -1){
+		  if(!allTags[tag]){ 
 		    /* [NEW] add generated code to allTags array */
-		    allTags.push(tagLink);
-		}
+		    //allTags.push(tagLink);
+			/* [NEW] add tag to allTags object */
+			allTags[tag] = 1;
+			} else{
+				allTags[tag]++; 
+			}
 		/* END LOOP: for each tag */
 		}
 		/* insert HTML of all the links into the tags wrapper */
 		tagsWrapper.innerHTML = html;
   /* END LOOP: for every article: */
+	} 
   /* [NEW] find list of tags in right column */
 		const tagsInRightColumn = document.querySelector(optTagsListSelector);
 		/* [NEW] add html from allTags to tagList */
-		tagsInRightColumn.innerHTML = allTags.join(' ');
+		//tagsInRightColumn.innerHTML = allTags.join(' ');
+	/* [NEW] create variable for all links HTML code */
+	let allTagsHtml = '';
+	/* [NEW] START LOOP: for each tag in allTags: */
+	for(let tag in allTags){
+		/* [NEW] generate code of a link and add it to allTagsHTML */
+		allTagsHtml += '<li><a href="#tag-'+ tag +'">' + tag + '</a> <span>(' + allTags[tag] + ') </span></li>';
 	}
+	tagsInRightColumn.innerHTML = allTagsHtml;
 }
 generateTags();
 
